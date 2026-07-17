@@ -6,6 +6,9 @@ set(SOURCES
     consumer/preview_consumer.cpp
     consumer/preview_consumer.h
 
+    publisher/frame_publisher.cpp
+    publisher/frame_publisher.h
+
     preview.cpp
     preview.h
 )
@@ -20,4 +23,5 @@ set_target_properties(preview PROPERTIES
 )
 
 source_group(sources\\consumer consumer/*)
+source_group(sources\\publisher publisher/*)
 source_group(sources ./*)

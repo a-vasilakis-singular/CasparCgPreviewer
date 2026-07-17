@@ -1,4 +1,3 @@
-```cpp
 /*
  * Copyright (c) 2026
  *
@@ -6,6 +5,8 @@
  */
 
 #include "preview_consumer.h"
+
+#include "../publisher/frame_publisher.h"
 
 #include <common/future.h>
 #include <common/log.h>
@@ -17,8 +18,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <atomic>
-
 namespace caspar::preview
 {
 
@@ -29,7 +28,7 @@ private:
 
     int channel_index_ = -1;
 
-    std::atomic_uint64_t frame_counter_{0};
+    frame_publisher publisher_;
 
 public:
     preview_consumer_proxy() = default;
@@ -54,16 +53,10 @@ public:
     }
 
     std::future<bool> send(core::video_field /*field*/,
-                           core::const_frame /*frame*/) override
+                           core::const_frame frame) override
     {
-        auto count = ++frame_counter_;
-
-        //
-        // PR #2
-        //
-        // The frame is intentionally ignored.
-        // PR #3 will publish it into shared memory.
-        //
+        publisher_.publish(frame);
+        auto count = publisher_.frame_count();
 
         if ((count % 250) == 0)
         {
@@ -102,7 +95,7 @@ public:
         core::monitor::state state;
 
         state["preview/channel"] = channel_index_;
-        state["preview/frames"]  = frame_counter_.load();
+        state["preview/frames"]  = publisher_.frame_count();
 
         return state;
     }
@@ -136,4 +129,3 @@ create_preconfigured_consumer(
 }
 
 } // namespace caspar::preview
-```
