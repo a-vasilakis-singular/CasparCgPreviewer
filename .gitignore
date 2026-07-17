@@ -427,4 +427,4 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-tools/cmake/cmake.zip
+tools/cmake/*
